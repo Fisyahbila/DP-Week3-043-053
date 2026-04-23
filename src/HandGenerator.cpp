@@ -3,9 +3,6 @@
 
 Hand HandGenerator::generateHand()
 {
-  std::cout << "[Hand Generator] Men-generate kartu permainan..." << std::endl;
-
-  Hand generatedHand;
-
-  return generatedHand;
+  std::cout << "[HandGenerator] Generating hand..." << std::endl;
+  return Hand{};
 }

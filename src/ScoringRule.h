@@ -4,11 +4,11 @@
 
 class ScoringRule {
 public:
-    ScoringRule();
-    int scoreHand(const Hand& hand);
+  ScoringRule();
+  int scoreHand(const Hand& hand);
 
 private:
-    int convertRankToScore(HandRank rank);
+  int convertRankToScore(HandRank rank);
 
-    PokerHandChecker* chainHead = nullptr;
+  PokerHandChecker* chainHead = nullptr;
 };

@@ -1,5 +1,5 @@
 #include "ScoringRule.h"
-#include "Checkers.h"
+#include "checkers/Checkers.h"
 #include <iostream>
 
 ScoringRule::ScoringRule()

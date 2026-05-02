@@ -9,11 +9,11 @@ void GameManager::runSession()
   Hand playerHand = handPlayer.generatehand();
   Hand generatedHand = handGenerator.generateHand();
 
-  // 2. cek jenis & hitung score
+  // 2. hitung score
   int finalScore = scoringRule.scoreHand(playerHand);
   std::cout << "[Game Manager] Skor akhir pemain: " << finalScore << std::endl;
 
-  // 3. cek score
+  // 3. cek blind
   bool isWin = blindRule.checkBlind(finalScore);
   std::cout << "[Game Manager] Hasil: " << (isWin ? "MENANG" : "KALAH") << std::endl;
 

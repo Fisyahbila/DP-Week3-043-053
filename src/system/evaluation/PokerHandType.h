@@ -8,6 +8,7 @@ namespace system_p {
         FLUSH_FIVE,
         FIVE_OF_A_KIND,
         FOUR_OF_A_KIND,
+        FLUSH_HOUSE,
         FULL_HOUSE,
         FLUSH,
         STRAIGHT,

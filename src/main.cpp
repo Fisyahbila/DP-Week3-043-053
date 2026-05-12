@@ -2,7 +2,7 @@
 
 int main()
 {
-  GameManager gameManager;
+  system_p::GameManager gameManager;
   gameManager.runSession();
   return 0;
 }

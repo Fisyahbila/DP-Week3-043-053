@@ -3,7 +3,7 @@
 
 #include "PokerHandType.h"
 #include "PokerHandChecker.h"
-#include "../card/hand.h"
+#include "../card/Card.h"
 #include <vector>
 
 namespace system_p {

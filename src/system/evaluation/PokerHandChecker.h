@@ -1,5 +1,5 @@
 #pragma once
-#include "../card/hand.h"
+#include "../card/Card.h"
 #include "PokerHandType.h"
 
 namespace system_p {

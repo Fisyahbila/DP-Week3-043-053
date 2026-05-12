@@ -3,7 +3,7 @@
 #include "../card/HandPlayer.h"
 #include "../scoring/ScoringRule.h"
 #include "../blind/BlindRule.h"
-#include "../../RewardRule.h"
+#include "../../mechanic/reward/RewardRule.h"
 
 class GameManager {
 public:
@@ -14,5 +14,5 @@ private:
     HandPlayer    handPlayer;
     ScoringRule   scoringRule;
     BlindRule     blindRule;
-    RewardRule    rewardRule;
+    mechanic::RewardRule rewardRule;
 };

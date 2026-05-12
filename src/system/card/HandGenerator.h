@@ -1,5 +1,5 @@
 #pragma once
-#include "Hand.h"
+#include "hand.h"
 
 class HandGenerator {
 public:

@@ -1,7 +1,7 @@
 #pragma once
-#include "../../HandGenerator.h"
-#include "../../HandPlayer.h"
-#include "../../ScoringRule.h"
+#include "../card/HandGenerator.h"
+#include "../card/HandPlayer.h"
+#include "../scoring/ScoringRule.h"
 #include "../blind/BlindRule.h"
 #include "../../RewardRule.h"
 

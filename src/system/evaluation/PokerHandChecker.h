@@ -1,5 +1,5 @@
 #pragma once
-#include "../../hand.h"
+#include "../card/hand.h"
 
 class PokerHandChecker {
 public:

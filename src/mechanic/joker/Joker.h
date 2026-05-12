@@ -2,10 +2,7 @@
 #define JOKER_H
 
 #include "ScoreContext.h"
-
-namespace system_p {
-    class PlayedHandResult; // Forward declaration
-}
+#include "../../system/scoring/PlayedHandResult.h"
 
 namespace mechanic {
     class Joker {

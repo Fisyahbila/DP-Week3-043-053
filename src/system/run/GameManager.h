@@ -1,9 +1,9 @@
 #pragma once
-#include "HandGenerator.h"
-#include "HandPlayer.h"
-#include "ScoringRule.h"
-#include "BlindRule.h"
-#include "RewardRule.h"
+#include "../../HandGenerator.h"
+#include "../../HandPlayer.h"
+#include "../../ScoringRule.h"
+#include "../blind/BlindRule.h"
+#include "../../RewardRule.h"
 
 class GameManager {
 public:

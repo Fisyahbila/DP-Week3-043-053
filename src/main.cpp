@@ -1,8 +1,8 @@
-#include "GameManager.h"
+#include "system/run/GameManager.h"
 
 int main()
 {
-  GameManager gameManager;
+  system_p::GameManager gameManager;
   gameManager.runSession();
   return 0;
 }

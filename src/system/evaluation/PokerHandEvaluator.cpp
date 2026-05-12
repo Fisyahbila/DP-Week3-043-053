@@ -1,5 +1,16 @@
 #include "PokerHandEvaluator.h"
-#include "Checkers.h"
+#include "checkers/RoyalFlushChecker.h"
+#include "checkers/StraightFlushChecker.h"
+#include "checkers/FlushFiveChecker.h"
+#include "checkers/FiveOfAKindChecker.h"
+#include "checkers/FourOfAKindChecker.h"
+#include "checkers/FullHouseChecker.h"
+#include "checkers/FlushChecker.h"
+#include "checkers/StraightChecker.h"
+#include "checkers/ThreeOfAKindChecker.h"
+#include "checkers/TwoPairChecker.h"
+#include "checkers/PairChecker.h"
+#include "checkers/HighCardChecker.h"
 
 namespace system_p {
 

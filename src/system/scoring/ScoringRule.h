@@ -1,6 +1,6 @@
 #pragma once
-#include "Hand.h"
-#include "PokerHandChecker.h"
+#include "../../hand.h"
+#include "../evaluation/PokerHandChecker.h"
 
 class ScoringRule {
 public:

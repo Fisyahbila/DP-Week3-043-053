@@ -1,125 +1,108 @@
 #include "Checkers.h"
 #include <iostream>
 
-HandRank FlushFiveChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FLUSH_FIVE) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FLUSH_FIVE;
-}
+namespace system_p {
 
-HandRank FlushHouseChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FLUSH_HOUSE) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FLUSH_HOUSE;
-}
+    PokerHandType FlushFiveChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Flush Five..." << std::endl;
+        // Logic will be implemented by System Programmer
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FLUSH_FIVE;
+    }
 
-HandRank FiveOfAKindChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FIVE_OF_A_KIND) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FIVE_OF_A_KIND;
-}
+    PokerHandType FlushHouseChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Flush House..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FLUSH_HOUSE;
+    }
 
-HandRank RoyalFlushChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::ROYAL_FLUSH) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::ROYAL_FLUSH;
-}
+    PokerHandType FiveOfAKindChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Five of a Kind..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FIVE_OF_A_KIND;
+    }
 
-HandRank StraightFlushChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::STRAIGHT_FLUSH) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::STRAIGHT_FLUSH;
-}
+    PokerHandType RoyalFlushChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Royal Flush..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::ROYAL_FLUSH;
+    }
 
-HandRank FourOfAKindChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FOUR_OF_A_KIND) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FOUR_OF_A_KIND;
-}
+    PokerHandType StraightFlushChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Straight Flush..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::STRAIGHT_FLUSH;
+    }
 
-HandRank FullHouseChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FULL_HOUSE) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FULL_HOUSE;
-}
+    PokerHandType FourOfAKindChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Four of a Kind..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FOUR_OF_A_KIND;
+    }
 
-HandRank FlushChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::FLUSH) << "..." << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::FLUSH;
-}
+    PokerHandType FullHouseChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Full House..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FULL_HOUSE;
+    }
 
-HandRank StraightChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::STRAIGHT) << "..." << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::STRAIGHT;
-}
+    PokerHandType FlushChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Flush..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::FLUSH;
+    }
 
-HandRank ThreeOfAKindChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::THREE_OF_A_KIND) << "..."
-            << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::THREE_OF_A_KIND;
-}
+    PokerHandType StraightChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Straight..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::STRAIGHT;
+    }
 
-HandRank TwoPairChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::TWO_PAIR) << "..." << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::TWO_PAIR;
-}
+    PokerHandType ThreeOfAKindChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Three of a Kind..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::THREE_OF_A_KIND;
+    }
 
-HandRank PairChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::PAIR) << "..." << std::endl;
-  if (nextChecker != nullptr) {
-    return nextChecker->check(hand);
-  }
-  return HandRank::PAIR;
-}
+    PokerHandType TwoPairChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Two Pair..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::TWO_PAIR;
+    }
 
-HandRank HighCardChecker::check(const Hand& hand)
-{
-  std::cout << "[Checker] Mengecek: " << handRankToString(HandRank::HIGH_CARD) << "..."
-            << std::endl;
-  return HandRank::HIGH_CARD;
-}
+    PokerHandType PairChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: Pair..." << std::endl;
+        if (nextChecker != nullptr) {
+            return nextChecker->check(hand);
+        }
+        return PokerHandType::PAIR;
+    }
+
+    PokerHandType HighCardChecker::check(const Hand& hand) {
+        std::cout << "[Checker] Mengecek: High Card..." << std::endl;
+        return PokerHandType::HIGH_CARD;
+    }
+
+} // namespace system_p

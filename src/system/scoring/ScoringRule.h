@@ -1,14 +1,18 @@
 #pragma once
 #include "../card/hand.h"
-#include "../evaluation/PokerHandChecker.h"
+#include "../evaluation/PokerHandType.h"
 
-class ScoringRule {
-public:
-  ScoringRule();
-  int scoreHand(const Hand& hand);
+namespace system_p {
+    class PokerHandEvaluator; // Forward declaration
 
-private:
-  int convertRankToScore(HandRank rank);
+    class ScoringRule {
+    public:
+        ScoringRule();
+        ~ScoringRule();
+        int scoreHand(const Hand& hand);
 
-  PokerHandChecker* chainHead = nullptr;
-};
+    private:
+        int convertRankToScore(PokerHandType rank);
+        PokerHandEvaluator* evaluator = nullptr;
+    };
+}

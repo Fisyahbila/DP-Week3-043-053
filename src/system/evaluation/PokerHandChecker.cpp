@@ -1,5 +1,7 @@
 #include "PokerHandChecker.h"
 
-void PokerHandChecker::setNext(PokerHandChecker* next) {
-    nextChecker = next;
+namespace system_p {
+    void PokerHandChecker::setNext(PokerHandChecker* next) {
+        nextChecker = next;
+    }
 }

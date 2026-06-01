@@ -4,10 +4,12 @@
 #include "../Joker.h"
 
 namespace mechanic {
-    class ChipBonusJoker : public Joker {
-    public:
-        void apply(ScoreContext& ctx, const system_p::PlayedHandResult& result) override;
-    };
-}
+
+class ChipBonusJoker : public JokerObserver {
+public:
+  void onNotify(ScoreContext& ctx, const system_p::PlayedHandResult& result) override;
+};
+
+} // namespace mechanic
 
 #endif // CHIP_BONUS_JOKER_H

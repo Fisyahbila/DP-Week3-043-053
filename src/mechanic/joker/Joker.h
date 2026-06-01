@@ -1,15 +1,14 @@
 #ifndef JOKER_H
 #define JOKER_H
 
-#include "ScoreContext.h"
-#include "../../system/scoring/PlayedHandResult.h"
+#include "JokerObserver.h"
 
 namespace mechanic {
-    class Joker {
-    public:
-        virtual void apply(ScoreContext& ctx, const system_p::PlayedHandResult& result) = 0;
-        virtual ~Joker() = default;
-    };
-}
+
+// Joker adalah alias/base untuk JokerObserver
+// Semua concrete joker extend class ini
+using Joker = JokerObserver;
+
+} // namespace mechanic
 
 #endif // JOKER_H

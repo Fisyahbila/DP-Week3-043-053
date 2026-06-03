@@ -1,82 +1,79 @@
 # Balatro-Like Poker Roguelike
 
-A terminal-based (CLI) poker roguelike game developed in C++, heavily inspired by Balatro. The core experience revolves around building a scoring engine from limited random cards, where upgrades make ordinary poker hands explode into massive high scores.
+Game poker roguelike berbasis terminal (CLI) yang dikembangkan menggunakan bahasa C++ (Pure Object-Oriented Programming). Terinspirasi erat dari mekanik utama game Balatro, di mana pemain membangun mesin skor dinamis melalui kartu acak, serta membelanjakan koin untuk meningkatkan level kombinasi kartu (*hand type*) melalui Toko (*Shop*).
 
-## Project Overview
+---
 
-- **Language:** C++ (Pure Object-Oriented Programming)
-  - No procedural globals or free functions for business logic.
-  - All behavior encapsulated within classes.
-  - Polymorphism via virtual methods; composition over inheritance for modifiers.
-- **Runtime:** Command-Line Interface (CLI)
-  - Text-based interaction (numbered menus, typed input).
-  - No graphics libraries or GUI frameworks.
+## 🚀 Fitur Utama Project
 
-## Core Loop
+1. **Card & Deck System**:
+   * Pengacakan dek standar 52 kartu menggunakan generator acak berbasis waktu.
+   * Draw kartu otomatis ke tangan pemain (*Hand State*) dengan kapasitas maksimal 8 kartu.
+2. **Data-Driven Scoring System**:
+   * Evaluasi kombinasi kartu dinamis menggunakan *Chain of Responsibility Pattern* (Checkers).
+   * Perhitungan skor berdasarkan tabel data konfiguratif `HandScoreTable` (chips & mult) ketimbang hardcoding.
+   * Objek hasil penilaian yang bersifat immutable (`PlayedHandResult`).
+3. **Polymorphic Blind System**:
+   * Rintangan musuh berbasis kelas abstrak polimorfis `BlindRule`.
+   * Turunan kelas mandiri: `SmallBlind` (target 300), `BigBlind` (target 800), dan `BossBlind` (target 1600), yang berskala secara dinamis mengikuti pengali Ante.
+   * `BlindManager` yang mengelola siklus blind aktif pemain.
+4. **Round State Management**:
+   * Pelacakan sisa giliran bermain (*hands remaining*), sisa pembuangan kartu (*discards remaining*), dan akumulasi skor dalam satu ronde ronde berjalan.
+5. **Interactive CLI Loop**:
+   * Input teks terintegrasi: pemain dapat memilih kartu berdasarkan indeks (0-7), mengeksekusi aksi bermain/buang, melihat status ronde, dan mengakses Toko untuk membeli upgrade level kombinasi kartu.
 
-1. Draw hand (max 8 cards).
-2. Player selects up to 5 cards.
-3. Evaluate poker hand type.
-4. Calculate base chips and mult.
-5. Create `ScoreContext`.
-6. Apply Joker/modifier effects.
-7. Compute final score (chips × mult).
-8. Update round score and check against blind target.
-9. Discard and redraw.
-10. Gain reward on blind clear.
-11. Upgrade build (Shop).
-12. Face harder blind.
+---
 
-## Genre Invariants
+## 📁 Struktur Folder & Arsitektur
 
-To maintain the Balatro-like feel, the following rules are non-negotiable:
-- Player makes discrete scoring decisions.
-- Poker hands are evaluated by standard rules.
-- Score comes from a readable `chips × mult` calculation.
-- Random card draw creates uncertainty.
-- Upgrades (Jokers/Planet Cards) modify future scoring potential.
-- Runs are built through repeated risk/reward choices.
-
-## Team Structure & Architecture
-
-The project is split into two strict domains, managed by two programmers.
-
-### Programmer A: System Programmer (Core Engine)
-**Domain:** `src/system/`
-- **Card & Deck System:** `Card`, `Deck`, `DrawService`
-- **Evaluation System:** `PokerHandEvaluator`, Chain of Responsibility Checkers
-- **Scoring System:** `HandScoreTable`, `ScoringRule`, immutable `PlayedHandResult`
-- **Blind System:** Targets, win/loss conditions
-- **Run System:** `GameManager`, CLI rendering, state machine
-
-### Programmer B: Mechanic Programmer (Game Feel & Content)
-**Domain:** `src/mechanic/`
-- **Hand Selection:** Player input validation
-- **Joker System:** Joker effects modifying `ScoreContext`
-- **Reward System:** Shop, Planet Cards, economy
-
-### Shared Interface Boundary
-System and Mechanic domains interact *only* through specific interfaces:
-- `ScoreContext`: Mutable state for Jokers to modify (chips/mult).
-- `PlayedHandResult`: Immutable base score and hand type.
-- `Joker`: Abstract base class implemented by Mechanic, executed by System.
-
-## Architecture Data Flow
+Proyek terbagi secara ketat ke dalam dua domain utama:
 
 ```text
-Deck
-  └─► DrawService
-        └─► HandState
-              └─► ChosenHand
-                    └─► PokerHandEvaluator   [Chain of Responsibility]
-                          └─► ScoringRule    [Data-Driven]
-                                └─► PlayedHandResult  [immutable]
-                                      └─► ScoreContext
-                                            ▲
-                                      JokerManager    [Observer]
-                                            │
-                                      FinalScore  (chips × mult)
-                                            └─► BlindManager
-                                                  └─► RoundState
-                                                        └─► RewardManager
+src/
+├── main.cpp
+├── test_main.cpp                   # Rangkaian Tes Unit TDD
+│
+├── system/                         # DOMAIN SYSTEM (Core Engine)
+│   ├── card/                       # Card, Deck, HandState
+│   ├── evaluation/                 # PokerHandEvaluator, Checkers
+│   ├── blind/                      # BlindRule, Small/Big/BossBlind, BlindManager
+│   ├── run/                        # GameManager (CLI Loop), RoundState
+│   └── scoring/                    # HandScoreTable, ScoringRule, PlayedHandResult
+│
+└── mechanic/                       # DOMAIN MECHANIC (Game Feel & Input)
+    ├── selection/                  # ChosenHand, SelectionValidator
+    └── reward/                     # RewardRule
+```
+
+---
+
+## 🧪 Strategi TDD & Pengujian Unit
+
+Kami menerapkan pendekatan **Test-Driven Development (TDD)** untuk menjamin kestabilan dan kebenaran logika bisnis domain secara terisolasi. 
+
+Detail rancangan kasus uji (*test cases*) dan panduan menjalankan rangkaian tes mandiri dapat diakses pada dokumen berikut:
+* **📖 [TDD.md - Test Driven Development Document](./TDD.md)**
+
+---
+
+## 🛠️ Cara Mengompilasi dan Menjalankan Game
+
+Pastikan compiler C++ Anda mendukung standar **C++17** atau yang lebih baru.
+
+### Menggunakan GCC / G++ (MinGW/Linux/macOS)
+```bash
+# Kompilasi kode game utama
+g++ -std=c++17 -o balatro.exe src/main.cpp src/system/card/Deck.cpp src/system/card/HandState.cpp src/system/scoring/HandScoreTable.cpp src/system/scoring/ScoringRule.cpp src/system/blind/SmallBlind.cpp src/system/blind/BigBlind.cpp src/system/blind/BossBlind.cpp src/system/blind/BlindManager.cpp src/system/run/RoundState.cpp src/mechanic/selection/ChosenHand.cpp src/mechanic/selection/SelectionValidator.cpp src/system/evaluation/PokerHandEvaluator.cpp src/system/evaluation/PokerHandChecker.cpp src/system/evaluation/checkers/*.cpp
+
+# Jalankan game
+./balatro.exe
+```
+
+### Menggunakan Compiler MSVC (Developer Command Prompt / Visual Studio)
+```cmd
+# Kompilasi kode game utama
+cl /EHsc /std:c++17 /Fe:balatro.exe src/main.cpp src/system/card/Deck.cpp src/system/card/HandState.cpp src/system/scoring/HandScoreTable.cpp src/system/scoring/ScoringRule.cpp src/system/blind/SmallBlind.cpp src/system/blind/BigBlind.cpp src/system/blind/BossBlind.cpp src/system/blind/BlindManager.cpp src/system/run/RoundState.cpp src/mechanic/selection/ChosenHand.cpp src/mechanic/selection/SelectionValidator.cpp src/system/evaluation/PokerHandEvaluator.cpp src/system/evaluation/PokerHandChecker.cpp src/system/evaluation/checkers/*.cpp
+
+# Jalankan game
+balatro.exe
 ```

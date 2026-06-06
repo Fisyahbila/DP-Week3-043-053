@@ -3,9 +3,9 @@
 
 namespace system_p {
 
-    class TwoPairChecker : public PokerHandChecker {
-    public:
-        PokerHandType check(const Hand& hand) override;
-    };
+class TwoPairChecker : public PokerHandChecker {
+public:
+  PokerHandType check(const Hand& hand) override;
+};
 
 } // namespace system_p

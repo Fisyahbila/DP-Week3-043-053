@@ -5,27 +5,27 @@
 #include "../blind/BlindManager.h"
 #include "RoundState.h"
 #include "../../mechanic/reward/RewardRule.h"
+#include "../../mechanic/reward/RewardManager.h"
 
 namespace system_p {
 
 class GameManager {
 public:
-    GameManager();
-    void runSession();
+  GameManager();
+  void runSession();
 
 private:
-    bool playBlind(int ante, int blindIndex);
-    void printHand();
-    
-    Deck        deck;
-    HandState   handState;
-    ScoringRule scoringRule;
-    BlindManager blindManager;
-    RoundState   roundState;
-    mechanic::RewardRule rewardRule;
-    
-    int totalMoney;
-    bool isGameOver;
+  bool playBlind(int ante, int blindIndex);
+  void printHand();
+
+  Deck deck;
+  HandState handState;
+  ScoringRule scoringRule;
+  BlindManager blindManager;
+  RoundState roundState;
+
+  mechanic::RewardManager rewardManager; // totalMoney sekarang ada di sini
+  bool isGameOver;
 };
 
 } // namespace system_p

@@ -3,9 +3,9 @@
 
 namespace system_p {
 
-    class ThreeOfAKindChecker : public PokerHandChecker {
-    public:
-        PokerHandType check(const Hand& hand) override;
-    };
+class ThreeOfAKindChecker : public PokerHandChecker {
+public:
+  PokerHandType check(const Hand& hand) override;
+};
 
 } // namespace system_p

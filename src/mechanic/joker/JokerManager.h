@@ -27,6 +27,6 @@ private:
   std::vector<JokerObserver*> observers;
 };
 
-}; // namespace mechanic
+} // namespace mechanic
 
 #endif // JOKER_MANAGER_H

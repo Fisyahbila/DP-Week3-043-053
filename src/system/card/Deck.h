@@ -9,6 +9,7 @@ public:
     static Deck createStandardDeck();
     void shuffle();
     Hand draw(int count);
+    Card drawCard();
 private:
     std::vector<Card> cards;
 };

@@ -24,7 +24,8 @@ public:
 enum class CommandTiming {
   NextBlind, // dieksekusi di awal blind berikutnya
   Start,     // dieksekusi di awal ronde (draw awal)
-  NextShop   // dieksekusi saat membuka toko berikutnya
+  NextShop,  // dieksekusi saat membuka toko berikutnya
+  NextAnte   // dieksekusi saat transisi ke ante berikutnya
 };
 
 // PendingCommand: wrapper command yang belum dieksekusi

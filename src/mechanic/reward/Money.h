@@ -3,28 +3,23 @@
 
 namespace mechanic {
 
-// Tracks player's money throughout the run
+// Mengelola mata uang koin (Money) pemain secara modular.
+// Menyediakan operasi earn, spend, dan canAfford.
 class Money {
 public:
-  explicit Money(int startAmount = 4) : amount(startAmount) {}
+  explicit Money(int startAmount = 4);
 
-  int getAmount() const { return amount; }
+  int getAmount() const;
+  bool canAfford(int cost) const;
 
-  bool spend(int cost)
-  {
-    if (amount >= cost) {
-      amount -= cost;
-      return true;
-    }
-    return false;
-  }
+  // Kurangi saldo; return false jika tidak cukup
+  bool spend(int cost);
 
-  void earn(int gained) { amount += gained; }
-
-  bool canAfford(int cost) const { return amount >= cost; }
+  // Tambah saldo (reward setelah blind)
+  void earn(int gained);
 
 private:
-  int amount;
+  int amount_;
 };
 
 } // namespace mechanic

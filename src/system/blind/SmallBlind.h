@@ -7,13 +7,18 @@ namespace system_p {
 
 class SmallBlind : public BlindRule {
 public:
-    explicit SmallBlind(int ante);
-    std::string getName() const override;
-    int getTargetScore() const override;
-    bool checkTarget(int score) override;
+  explicit SmallBlind(int ante);
+  std::string getName() const override;
+  int getTargetScore() const override;
+  bool checkTarget(int score) override;
+
+  // Skip reward: +1 BonusHand di blind berikutnya
+  std::unique_ptr<mechanic::PendingCommand> createSkipRewardCommand(int& remainingPlays,
+                                                                    Deck& deck,
+                                                                    int& freeRerolls) const override;
 
 private:
-    int targetScore;
+  int targetScore;
 };
 
 } // namespace system_p

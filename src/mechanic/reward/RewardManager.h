@@ -2,6 +2,8 @@
 #define REWARD_MANAGER_H
 
 #include "../../system/scoring/HandScoreTable.h"
+#include "../joker/JokerManager.h"
+#include "../joker/JokerReward.h"
 #include "Money.h"
 #include "RewardCommand.h"
 #include "RewardRule.h"
@@ -11,20 +13,27 @@
 
 namespace mechanic {
 
-// RewardManager mengkoordinasi seluruh pipeline reward setelah blind clear:
-// 1. Hitung reward via RewardRule
-// 2. Aplikasikan reward via EarnMoneyCommand (Command pattern)
-// 3. Buka ShopSystem untuk player
+// RewardManager
+// Mengkoordinasi seluruh pipeline reward setelah
+// blind clear:
+//   1. Hitung reward via RewardRule
+//   2. Aplikasikan reward via EarnMoneyCommand
+//   3. Buka ShopSystem (Planet Card + Joker)
+//
+// Memiliki Money, JokerManager, JokerSlot, JokerReward,
+// dan ShopSystem secara modular.
 class RewardManager {
 public:
   RewardManager(system_p::HandScoreTable& scoreTable, int startMoney = 4)
     : money_(startMoney)
     , scoreTable_(scoreTable)
-    , shop_(money_, scoreTable_)
+    , jokerSlot_(jokerManager_)
+    , jokerReward_(jokerSlot_)
+    , shop_(money_, scoreTable_, jokerReward_)
   {
   }
 
-  // Dipanggil setelah player menang blind
+  // Dipanggil setelah pemain menang blind.
   // blindIndex: 0=Small, 1=Big, 2=Boss
   void onBlindCleared(int blindIndex, int handsRemaining, const std::string& blindName)
   {
@@ -41,6 +50,9 @@ public:
     shop_.open();
   }
 
+  // Akses ke JokerManager (untuk attach/notify dari GameManager)
+  JokerManager& getJokerManager() { return jokerManager_; }
+
   int getMoney() const { return money_.getAmount(); }
   Money& getMoneyRef() { return money_; }
 
@@ -50,7 +62,7 @@ private:
                           int handsRemainingBonus,
                           int totalEarned) const
   {
-    std::cout << "\n==============================================" << std::endl;
+    std::cout << "\n==========================================" << std::endl;
     std::cout << "[MENANG] Anda berhasil mengalahkan " << blindName << "!" << std::endl;
     std::cout << "Detail Hadiah:" << std::endl;
     std::cout << "  - Base Payout     : $" << basePayout << std::endl;
@@ -58,11 +70,19 @@ private:
               << std::endl;
     std::cout << "  - Uang Didapat    : $" << totalEarned << std::endl;
     std::cout << "  - Total Uang      : $" << money_.getAmount() << std::endl;
-    std::cout << "==============================================" << std::endl;
+    std::cout << "  - Slot Joker      : " << jokerSlot_.usedSlots() << "/" << JokerSlot::MAX_SLOTS
+              << std::endl;
+    std::cout << "==========================================" << std::endl;
   }
 
   Money money_;
   RewardRule rule_;
+
+  // Joker subsystem (urutan deklarasi penting: manager sebelum slot/reward)
+  JokerManager jokerManager_;
+  JokerSlot jokerSlot_;
+  JokerReward jokerReward_;
+
   system_p::HandScoreTable& scoreTable_;
   ShopSystem shop_;
 };

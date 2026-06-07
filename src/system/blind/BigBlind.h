@@ -7,13 +7,18 @@ namespace system_p {
 
 class BigBlind : public BlindRule {
 public:
-    explicit BigBlind(int ante);
-    std::string getName() const override;
-    int getTargetScore() const override;
-    bool checkTarget(int score) override;
+  explicit BigBlind(int ante);
+  std::string getName() const override;
+  int getTargetScore() const override;
+  bool checkTarget(int score) override;
+
+  // Skip reward: Free Playing Card ditambahkan ke deck saat Start
+  std::unique_ptr<mechanic::PendingCommand> createSkipRewardCommand(int& remainingPlays,
+                                                                    Deck& deck,
+                                                                    int& freeRerolls) const override;
 
 private:
-    int targetScore;
+  int targetScore;
 };
 
 } // namespace system_p

@@ -9,6 +9,7 @@ class Card {
 public:
     int rank;
     Suit suit;
+    Card() : rank(0), suit(Suit::HEART) {}
     Card(int r, Suit s) : rank(r), suit(s) {}
 };
 

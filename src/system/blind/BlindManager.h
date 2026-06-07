@@ -1,7 +1,7 @@
 #ifndef BLIND_MANAGER_H
 #define BLIND_MANAGER_H
 
-#include "BlindRule.h"
+#include "BlindState.h"
 #include <memory>
 #include <string>
 
@@ -14,13 +14,19 @@ public:
 
     void selectBlind(int ante, int blindTypeIndex);
     
-    BlindRule* getCurrentBlind() const;
+    BlindState* getCurrentBlind() const;
     bool isTargetMet(int score) const;
     int getCurrentTargetScore() const;
     std::string getCurrentBlindName() const;
 
+    std::shared_ptr<BlindState> getCurrentBlindState() const { return currentBlindState; }
+    void setCurrentBlindState(std::shared_ptr<BlindState> state) { currentBlindState = state; }
+    int getCurrentAnte() const { return currentAnte; }
+    void setCurrentAnte(int ante) { currentAnte = ante; }
+
 private:
-    std::unique_ptr<BlindRule> currentBlind;
+    std::shared_ptr<BlindState> currentBlindState;
+    int currentAnte;
 };
 
 } // namespace system_p

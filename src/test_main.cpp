@@ -4,6 +4,8 @@
 #include "system/scoring/ScoringRule.h"
 #include "system/blind/BlindManager.h"
 #include "system/run/RoundState.h"
+#include "system/run/RunSessionState.h"
+#include "system/run/RunSessionService.h"
 #include "mechanic/selection/ChosenHand.h"
 #include "mechanic/selection/SelectionValidator.h"
 #include <cassert>
@@ -21,13 +23,20 @@ void testDeckAndDrawing() {
     Hand hand = deck.draw(8);
     assert(hand.size() == 8);
     
-    // Draw remaining cards (52 - 8 = 44)
-    Hand rest = deck.draw(44);
-    assert(rest.size() == 44);
+    // Draw 1 card using drawCard
+    Card singleCard = deck.drawCard();
+    assert(singleCard.rank >= 1 && singleCard.rank <= 13);
+    
+    // Draw remaining cards (52 - 8 - 1 = 43)
+    Hand rest = deck.draw(43);
+    assert(rest.size() == 43);
     
     // Empty deck draw
     Hand emptyDraw = deck.draw(1);
     assert(emptyDraw.empty());
+    
+    Card emptyCard = deck.drawCard();
+    assert(emptyCard.rank == 0); // Default constructed dummy rank
     
     std::cout << "[PASS] Deck & Drawing tests completed successfully." << std::endl;
 }
@@ -153,6 +162,21 @@ void testRoundState() {
     std::cout << "[PASS] Round State tests completed successfully." << std::endl;
 }
 
+// Test Suite 6: RunSessionState and RunSessionService
+void testRunSessionState() {
+    std::cout << "[TEST] Running RunSessionState tests..." << std::endl;
+    RunSessionState sessionState;
+    sessionState.persistentState.ante = 2;
+    sessionState.persistentState.money = 10;
+    sessionState.runtimeState.blindScore = 1500;
+    
+    assert(sessionState.persistentState.ante == 2);
+    assert(sessionState.persistentState.money == 10);
+    assert(sessionState.runtimeState.blindScore == 1500);
+    
+    std::cout << "[PASS] RunSessionState tests completed successfully." << std::endl;
+}
+
 int main() {
     std::cout << "==============================================" << std::endl;
     std::cout << "      BALATRO TDD UNIT TEST SUITE RUNNER      " << std::endl;
@@ -163,6 +187,7 @@ int main() {
     testScoringSystem();
     testPolymorphicBlinds();
     testRoundState();
+    testRunSessionState();
     
     std::cout << "==============================================" << std::endl;
     std::cout << "      ALL TESTS PASSED SUCCESSFULLY!          " << std::endl;

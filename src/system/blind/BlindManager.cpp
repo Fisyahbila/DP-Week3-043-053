@@ -1,48 +1,56 @@
 #include "BlindManager.h"
-#include "SmallBlind.h"
-#include "BigBlind.h"
-#include "BossBlind.h"
+#include "SmallBlindState.h"
+#include "BigBlindState.h"
+#include "BossBlindState.h"
+#include <functional>
+#include <iostream>
 
 namespace system_p {
 
-BlindManager::BlindManager() : currentBlind(nullptr) {}
+BlindManager::BlindManager() : currentBlindState(nullptr), currentAnte(1) {}
 
 BlindManager::~BlindManager() = default;
 
 void BlindManager::selectBlind(int ante, int blindTypeIndex) {
-    if (blindTypeIndex == 0) {
-        currentBlind = std::make_unique<SmallBlind>(ante);
-    } else if (blindTypeIndex == 1) {
-        currentBlind = std::make_unique<BigBlind>(ante);
-    } else if (blindTypeIndex == 2) {
-        currentBlind = std::make_unique<BossBlind>(ante);
+    currentAnte = ante;
+    static const std::function<std::shared_ptr<BlindState>()> factories[] = {
+        []() { return std::make_shared<SmallBlindState>(); },
+        []() { return std::make_shared<BigBlindState>(); },
+        []() { return std::make_shared<BossBlindState>(); }
+    };
+    if (blindTypeIndex >= 0 && blindTypeIndex < 3) {
+        currentBlindState = factories[blindTypeIndex]();
     } else {
-        // Default to Small Blind if index is out of bounds
-        currentBlind = std::make_unique<SmallBlind>(ante);
+        currentBlindState = factories[0]();
     }
 }
 
-BlindRule* BlindManager::getCurrentBlind() const {
-    return currentBlind.get();
+BlindState* BlindManager::getCurrentBlind() const {
+    return currentBlindState.get();
 }
 
 bool BlindManager::isTargetMet(int score) const {
-    if (currentBlind != nullptr) {
-        return currentBlind->checkTarget(score);
+    if (currentBlindState != nullptr) {
+        int target = currentBlindState->getTargetScore(currentAnte);
+        std::cout << "[" << currentBlindState->getName() << "] Checking score: " << score << " / " << target << std::endl;
+        if (currentBlindState->getName() == "Boss Blind") {
+            std::cout << "[Boss Blind] Active Modifier: None (Standard Boss)" << std::endl;
+        }
+        return score >= target;
     }
     return false;
 }
 
 int BlindManager::getCurrentTargetScore() const {
-    if (currentBlind != nullptr) {
-        return currentBlind->getTargetScore();
+    if (currentBlindState != nullptr) {
+        return currentBlindState->getTargetScore(currentAnte);
     }
     return 0;
 }
 
 std::string BlindManager::getCurrentBlindName() const {
-    if (currentBlind != nullptr) {
-        return currentBlind->getName();
+    if (currentBlindState != nullptr) {
+        return currentBlindState->getName();
     }
     return "None";
 }

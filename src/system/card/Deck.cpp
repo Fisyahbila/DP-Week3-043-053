@@ -29,4 +29,13 @@ Hand Deck::draw(int count) {
     return hand;
 }
 
+Card Deck::drawCard() {
+    if (cards.empty()) {
+        return Card();
+    }
+    Card c = cards.back();
+    cards.pop_back();
+    return c;
+}
+
 } // namespace system_p

@@ -4,8 +4,11 @@
 #include "../../system/card/Deck.h"
 #include "../../system/evaluation/PokerHandType.h"
 #include "../../system/scoring/HandScoreTable.h"
+#include "../joker/Joker.h"
+#include "../joker/JokerReward.h"
 #include "Money.h"
 #include <memory>
+#include <string>
 
 namespace mechanic {
 
@@ -38,7 +41,8 @@ struct PendingCommand {
   }
 };
 
-// Concrete Command: Earn money (after blind win)
+// EarnMoneyCommand
+// Memberikan sejumlah uang kepada pemain (reward blind)
 class EarnMoneyCommand : public RewardCommand {
 public:
   EarnMoneyCommand(Money& money, int amount) : money_(money), amount_(amount) {}
@@ -56,7 +60,8 @@ private:
   int amount_;
 };
 
-// Concrete Command: Buy & apply a Planet Card
+// BuyPlanetCardCommand
+// Membeli Planet Card dari toko: kurangi uang + upgrade hand
 class BuyPlanetCardCommand : public RewardCommand {
 public:
   BuyPlanetCardCommand(Money& money,
@@ -87,14 +92,64 @@ private:
   int cost_;
 };
 
-// Concrete Command: Skip shop
+// SkipShopCommand
+// Tidak melakukan apa-apa; digunakan saat pemain
+// memilih untuk melewati toko.
 class SkipShopCommand : public RewardCommand {
 public:
   bool execute() override { return true; }
   const char* description() const override { return "Skip shop"; }
 };
 
-// Concrete Command: BonusHandCommand
+// JokerRewardCommand
+// Memberikan Joker baru ke slot aktif pemain.
+// Menggunakan JokerReward untuk validasi slot dan
+// memanggil attach ke JokerManager.
+//
+// Ownership joker berpindah ke JokerManager jika
+// grantJoker() berhasil. Jika gagal (slot penuh),
+// joker di-delete di sini agar tidak leak.
+class JokerRewardCommand : public RewardCommand {
+public:
+  // joker    : concrete joker yang akan diberikan (raw pointer, ownership ke command ini dulu)
+  // reward   : JokerReward yang mengelola slot pemain
+  // jokerName: nama untuk logging / tampilan
+  JokerRewardCommand(JokerObserver* joker, JokerReward& reward, const std::string& jokerName)
+    : joker_(joker)
+    , reward_(reward)
+    , jokerName_(jokerName)
+  {
+  }
+
+  ~JokerRewardCommand() override
+  {
+    // Jika execute() belum dipanggil atau gagal dan joker_
+    // belum di-transfer ke JokerSlot, kita bersihkan di sini.
+    // Setelah execute() sukses joker_ di-set null.
+    delete joker_;
+  }
+
+  bool execute() override
+  {
+    if (joker_ == nullptr)
+      return false;
+
+    bool ok = reward_.grantJoker(joker_, jokerName_);
+    if (ok) {
+      joker_ = nullptr; // ownership berpindah ke JokerManager via JokerSlot
+    }
+    return ok;
+  }
+
+  const char* description() const override { return "Grant Joker reward"; }
+
+private:
+  JokerObserver* joker_; // nullptr setelah transfer berhasil
+  JokerReward& reward_;
+  std::string jokerName_;
+};
+
+// BonusHandCommand
 // Memberikan +1 remainingPlays di awal blind berikutnya
 // timing: NextBlind
 class BonusHandCommand : public RewardCommand {
@@ -113,7 +168,7 @@ private:
   int& remainingPlays_;
 };
 
-// Concrete Command: FreePlayingCardCommand
+// FreePlayingCardCommand
 // Menambahkan satu kartu acak baru ke deck
 // timing: Start
 class FreePlayingCardCommand : public RewardCommand {
@@ -122,10 +177,8 @@ public:
 
   bool execute() override
   {
-    // Tambahkan satu kartu acak ke deck menggunakan draw internal
-    // Kartu ditambahkan saat Start (sebelum draw awal)
     system_p::Hand bonus = deck_.draw(1);
-    (void)bonus; // kartu sudah diambil dari deck; efek "free card" ada di draw berikutnya
+    (void)bonus;
     return true;
   }
 
@@ -135,7 +188,7 @@ private:
   system_p::Deck& deck_;
 };
 
-// Concrete Command: FreeRerollCommand
+// FreeRerollCommand
 // Memberikan +1 freeRerolls di toko berikutnya
 // timing: NextShop
 class FreeRerollCommand : public RewardCommand {

@@ -1,0 +1,25 @@
+{
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "C/C++: Build Balatro Game",
+            "command": "bash",
+            "args": [
+                "-c",
+                "g++ $(find src -name '*.cpp' ! -name 'test_main.cpp' | sed 's/ /\\\\ /g') -o balatro_game.exe"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Mengompilasi semua file .cpp di dalam folder src (exclude test_main.cpp) ke balatro_game.exe"
+        }
+    ],
+    "version": "2.0.0"
+}

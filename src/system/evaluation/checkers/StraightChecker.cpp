@@ -15,9 +15,18 @@ static std::vector<int> getSortedUniqueRanks(const Hand& hand)
 
 static bool isStraight(const Hand& hand)
 {
+  // Straight requires at least 5 cards
+  if (hand.size() < 5)
+    return false;
+
   auto ranks = getSortedUniqueRanks(hand);
-  if (ranks.size() < 2)
-    return true;
+
+  // All cards must have distinct ranks for a straight
+  // (e.g. a pair/trips cannot be a straight)
+  if (ranks.size() != hand.size())
+    return false;
+
+  // Check normal consecutive sequence
   bool normal = true;
   for (size_t i = 1; i < ranks.size(); i++) {
     if (ranks[i] != ranks[i - 1] + 1) {
@@ -27,7 +36,9 @@ static bool isStraight(const Hand& hand)
   }
   if (normal)
     return true;
-  if (ranks.back() == 14) {
+
+  // Check Ace-low straight (A-2-3-4-5), only for exactly 5 cards
+  if (ranks.back() == 14 && hand.size() == 5) {
     std::vector<int> aceLow = ranks;
     aceLow.pop_back();
     aceLow.insert(aceLow.begin(), 1);

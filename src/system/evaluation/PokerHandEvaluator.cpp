@@ -1,57 +1,61 @@
+#include <cstddef>
 #include "PokerHandEvaluator.h"
-#include "checkers/RoyalFlushChecker.h"
-#include "checkers/StraightFlushChecker.h"
-#include "checkers/FlushFiveChecker.h"
 #include "checkers/FiveOfAKindChecker.h"
+#include "checkers/FlushChecker.h"
+#include "checkers/FlushFiveChecker.h"
 #include "checkers/FourOfAKindChecker.h"
 #include "checkers/FullHouseChecker.h"
-#include "checkers/FlushChecker.h"
+#include "checkers/HighCardChecker.h"
+#include "checkers/PairChecker.h"
+#include "checkers/RoyalFlushChecker.h"
 #include "checkers/StraightChecker.h"
+#include "checkers/StraightFlushChecker.h"
 #include "checkers/ThreeOfAKindChecker.h"
 #include "checkers/TwoPairChecker.h"
-#include "checkers/PairChecker.h"
-#include "checkers/HighCardChecker.h"
 
 namespace system_p {
 
-    PokerHandEvaluator::PokerHandEvaluator() {
-        // Priority order (high -> low):
-        // Royal Flush > Straight Flush > Flush Five > Five of a Kind >
-        // Four of a Kind > Full House > Flush > Straight >
-        // Three of a Kind > Two Pair > Pair > High Card
+PokerHandEvaluator::PokerHandEvaluator()
+{
+  // Priority order (high -> low):
+  // Royal Flush > Straight Flush > Flush Five > Five of a Kind >
+  // Four of a Kind > Full House > Flush > Straight >
+  // Three of a Kind > Two Pair > Pair > High Card
 
-        checkers.push_back(new RoyalFlushChecker());
-        checkers.push_back(new StraightFlushChecker());
-        checkers.push_back(new FlushFiveChecker());
-        checkers.push_back(new FiveOfAKindChecker());
-        checkers.push_back(new FourOfAKindChecker());
-        checkers.push_back(new FullHouseChecker());
-        checkers.push_back(new FlushChecker());
-        checkers.push_back(new StraightChecker());
-        checkers.push_back(new ThreeOfAKindChecker());
-        checkers.push_back(new TwoPairChecker());
-        checkers.push_back(new PairChecker());
-        checkers.push_back(new HighCardChecker());
+  checkers.push_back(new RoyalFlushChecker());
+  checkers.push_back(new StraightFlushChecker());
+  checkers.push_back(new FlushFiveChecker());
+  checkers.push_back(new FiveOfAKindChecker());
+  checkers.push_back(new FourOfAKindChecker());
+  checkers.push_back(new FullHouseChecker());
+  checkers.push_back(new FlushChecker());
+  checkers.push_back(new StraightChecker());
+  checkers.push_back(new ThreeOfAKindChecker());
+  checkers.push_back(new TwoPairChecker());
+  checkers.push_back(new PairChecker());
+  checkers.push_back(new HighCardChecker());
 
-        // Build the chain
-        for (size_t i = 0; i < checkers.size() - 1; ++i) {
-            checkers[i]->setNext(checkers[i + 1]);
-        }
+  // Build the chain
+  for (size_t i = 0; i < checkers.size() - 1; ++i) {
+    checkers[i]->setNext(checkers[i + 1]);
+  }
 
-        chainHead = checkers[0];
-    }
+  chainHead = checkers[0];
+}
 
-    PokerHandEvaluator::~PokerHandEvaluator() {
-        for (auto checker : checkers) {
-            delete checker;
-        }
-    }
+PokerHandEvaluator::~PokerHandEvaluator()
+{
+  for (auto checker : checkers) {
+    delete checker;
+  }
+}
 
-    PokerHandType PokerHandEvaluator::evaluate(const Hand& hand) {
-        if (chainHead != nullptr) {
-            return chainHead->check(hand);
-        }
-        return PokerHandType::NONE;
-    }
+PokerHandType PokerHandEvaluator::evaluate(const Hand& hand)
+{
+  if (chainHead != nullptr) {
+    return chainHead->check(hand);
+  }
+  return PokerHandType::NONE;
+}
 
 } // namespace system_p

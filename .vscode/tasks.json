@@ -3,10 +3,10 @@
         {
             "type": "shell",
             "label": "C/C++: Build Balatro Game",
-            "command": "PowerShell",
+            "command": "bash",
             "args": [
-                "-File",
-                "${workspaceFolder}\\build_game.ps1"
+                "-c",
+                "g++ $(find src -name '*.cpp' ! -name 'test_main.cpp' | sed 's/ /\\\\ /g') -o balatro_game.exe"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -18,7 +18,7 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Mengompilasi semua file .cpp di dalam folder src (exclude test_main.cpp)."
+            "detail": "Mengompilasi semua file .cpp di dalam folder src (exclude test_main.cpp) ke balatro_game.exe"
         }
     ],
     "version": "2.0.0"

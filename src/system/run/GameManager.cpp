@@ -1,10 +1,5 @@
 #include "GameManager.h"
-#include "../../mechanic/selection/ChosenHand.h"
-#include "../../mechanic/selection/SelectionValidator.h"
-#include <algorithm>
-#include <iostream>
-#include <sstream>
-#include <vector>
+#include "RunSessionService.h"
 
 namespace system_p {
 
@@ -190,14 +185,9 @@ void GameManager::printHand()
 
     std::cout << " of ";
 
-    switch (hand[i].suit) {
-      case Suit::HEART:   std::cout << "Heart (H)"; break;
-      case Suit::DIAMOND: std::cout << "Diamond (D)"; break;
-      case Suit::CLUB:    std::cout << "Club (C)"; break;
-      case Suit::SPADE:   std::cout << "Spade (S)"; break;
-    }
-    std::cout << std::endl;
-  }
+void GameManager::runSession() {
+    RunSessionService service;
+    service.runSession();
 }
 
 } // namespace system_p

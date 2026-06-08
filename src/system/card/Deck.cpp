@@ -40,3 +40,13 @@ void Deck::addCard(const Card& card)
 }
 
 } // namespace system_p
+Card Deck::drawCard() {
+    if (cards.empty()) {
+        return Card();
+    }
+    Card c = cards.back();
+    cards.pop_back();
+    return c;
+}
+
+} // namespace system_p

@@ -59,6 +59,12 @@ static bool isStraight(const Hand& hand)
 PokerHandType StraightFlushChecker::check(const Hand& hand)
 {
   std::cout << "[Checker] Mengecek: Straight Flush..." << std::endl;
+  // BUG FIX #4: Tambahkan pengecekan minimum 5 kartu.
+  if (hand.size() < 5) {
+    if (nextChecker != nullptr)
+      return nextChecker->check(hand);
+    return PokerHandType::NONE;
+  }
   if (isFlush(hand) && isStraight(hand)) {
     return PokerHandType::STRAIGHT_FLUSH;
   }

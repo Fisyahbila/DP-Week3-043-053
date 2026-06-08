@@ -132,7 +132,10 @@ bool GameManager::playBlind(int ante, int blindIndex)
         playedHand.push_back(currentHand[idx]);
       }
 
-      int scoredPoints = scoringRule.scoreHand(playedHand);
+      // Evaluasi hand type dan base score
+      system_p::PlayedHandResult result = scoringRule.evaluateAndScore(playedHand);
+      // Terapkan efek Joker aktif ke score
+      int scoredPoints = rewardManager.getJokerManager().getFinalScore(result);
       roundState.addScore(scoredPoints);
       roundState.useHand();
 

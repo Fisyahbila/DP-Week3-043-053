@@ -77,13 +77,13 @@ private:
 
   Money money_;
   RewardRule rule_;
+  system_p::HandScoreTable& scoreTable_; // reference; deklarasi sebelum yang bergantung padanya
 
   // Joker subsystem (urutan deklarasi penting: manager sebelum slot/reward)
   JokerManager jokerManager_;
   JokerSlot jokerSlot_;
   JokerReward jokerReward_;
 
-  system_p::HandScoreTable& scoreTable_;
   ShopSystem shop_;
 };
 

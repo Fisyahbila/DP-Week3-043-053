@@ -5,7 +5,8 @@ namespace system_p {
 
 static bool isFlush(const Hand& hand)
 {
-  if (hand.empty())
+  // Flush requires at least 5 cards
+  if (hand.size() < 5)
     return false;
   Suit first = hand[0].suit;
   for (const auto& card : hand)

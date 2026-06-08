@@ -39,7 +39,6 @@ void Deck::addCard(const Card& card)
   cards.push_back(card);
 }
 
-} // namespace system_p
 Card Deck::drawCard() {
     if (cards.empty()) {
         return Card();

@@ -10,10 +10,7 @@ public:
   void shuffle();
   Hand draw(int count);
   void addCard(const Card& card); // BUG FIX #3: tambah kartu ke deck
-    static Deck createStandardDeck();
-    void shuffle();
-    Hand draw(int count);
-    Card drawCard();
+  Card drawCard();
 private:
   std::vector<Card> cards;
 };

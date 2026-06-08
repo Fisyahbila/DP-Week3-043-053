@@ -1,13 +1,13 @@
 #include "GameManager.h"
-#include "RunSessionService.h"
+#include "../../mechanic/selection/SelectionValidator.h"
 
 namespace system_p {
 
 GameManager::GameManager()
   : roundState(4, 4)
   , rewardManager(scoringRule.getScoreTable(), 4)
-  , // start $4
-  isGameOver(false)
+  , blindManager()
+  , isGameOver(false)
 {
 }
 
@@ -184,10 +184,19 @@ void GameManager::printHand()
       std::cout << r;
 
     std::cout << " of ";
-
-void GameManager::runSession() {
-    RunSessionService service;
-    service.runSession();
+    
+    Suit s = hand[i].suit;
+    if (s == Suit::SPADE)
+      std::cout << "Spades";
+    else if (s == Suit::HEART)
+      std::cout << "Hearts";
+    else if (s == Suit::DIAMOND)
+      std::cout << "Diamonds";
+    else if (s == Suit::CLUB)
+      std::cout << "Clubs";
+    
+    std::cout << std::endl;
+  }
 }
 
 } // namespace system_p

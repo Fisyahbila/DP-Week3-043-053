@@ -17,42 +17,46 @@ ShopSystem::ShopSystem(Money& money, system_p::HandScoreTable& scoreTable, Joker
 {
 }
 
-// open() — entry point toko
+// open() entry point toko
 void ShopSystem::open()
 {
-  printSeparator();
-  std::cout << "=== TOKO (SHOP) ===" << std::endl;
-  printSeparator();
-  std::cout << "Uang saat ini : $" << money_.getAmount() << std::endl;
-  std::cout << "Slot Joker    : " << jokerReward_.usedSlots() << " / " << JokerSlot::MAX_SLOTS
-            << " (kosong: " << jokerReward_.freeSlots() << ")" << std::endl;
-  printSeparator();
-  std::cout << "1. Beli Planet Card  — Upgrade kombinasi kartu ($" << PLANET_CARD_COST << ")"
-            << std::endl;
-  std::cout << "2. Beli Joker        — Tambah joker aktif ($" << JOKER_COST << ")" << std::endl;
-  std::cout << "3. Lewati Toko dan Lanjut ke Blind Berikutnya" << std::endl;
-  std::cout << "Pilihan Anda (1-3): ";
+  // BUG FIX #5: Bungkus logika toko dalam while-loop agar pemain bisa
+  // membeli lebih dari 1 item per kunjungan toko. Loop hanya keluar jika
+  // pemain memilih "Lewati" (pilihan 3 / default).
+  while (true) {
+    printSeparator();
+    std::cout << "=== TOKO (SHOP) ===" << std::endl;
+    printSeparator();
+    std::cout << "Uang saat ini : $" << money_.getAmount() << std::endl;
+    std::cout << "Slot Joker    : " << jokerReward_.usedSlots() << " / " << JokerSlot::MAX_SLOTS
+              << " (kosong: " << jokerReward_.freeSlots() << ")" << std::endl;
+    printSeparator();
+    std::cout << "1. Beli Planet Card  -> Upgrade kombinasi kartu ($" << PLANET_CARD_COST << ")"
+              << std::endl;
+    std::cout << "2. Beli Joker        -> Tambah joker aktif ($" << JOKER_COST << ")" << std::endl;
+    std::cout << "3. Lewati Toko dan Lanjut ke Blind Berikutnya" << std::endl;
+    std::cout << "Pilihan Anda (1-3): ";
 
-  int shopChoice = 3;
-  std::cin >> shopChoice;
-  if (std::cin.fail()) {
-    std::cin.clear();
-    std::cin.ignore(10000, '\n');
-    shopChoice = 3;
-  }
-
-  switch (shopChoice) {
-    case 1:  processPlanetCardPurchase(); break;
-    case 2:  processJokerPurchase(); break;
-    default: {
-      SkipShopCommand skip;
-      skip.execute();
-      std::cout << "[Shop] Melewati toko." << std::endl;
-      break;
+    int shopChoice = 3;
+    std::cin >> shopChoice;
+    if (std::cin.fail()) {
+      std::cin.clear();
+      std::cin.ignore(10000, '\n');
+      shopChoice = 3;
     }
-  }
 
-  std::cout << "\nLanjut ke Blind berikutnya...\n" << std::endl;
+    switch (shopChoice) {
+      case 1:  processPlanetCardPurchase(); break;
+      case 2:  processJokerPurchase(); break;
+      default: {
+        SkipShopCommand skip;
+        skip.execute();
+        std::cout << "[Shop] Melewati toko." << std::endl;
+        std::cout << "\nLanjut ke Blind berikutnya...\n" << std::endl;
+        return; // keluar dari loop dan fungsi open()
+      }
+    }
+  } // end while
 }
 
 // processPlanetCardPurchase
@@ -90,12 +94,10 @@ void ShopSystem::processPlanetCardPurchase()
 
   // Command mengeksekusi transaksi:
   //   1. Kurangi uang
-  //   2. Upgrade hand via PlanetCard::applyTo()
+  // BUG FIX #2: Hapus card->applyTo() di bawah karena BuyPlanetCardCommand
+  // sudah memanggil upgradeHand(). Memanggil keduanya = double upgrade.
   BuyPlanetCardCommand buyCmd(money_, scoreTable_, card->getTargetHand(), card->getCost());
   if (buyCmd.execute()) {
-    // Terapkan modifier PlanetCard ke tabel (level up)
-    card->applyTo(scoreTable_);
-
     std::cout << "[Shop] Berhasil membeli " << card->getName() << " dan meng-upgrade "
               << scoreTable_.getHandName(card->getTargetHand()) << "!" << std::endl;
     std::cout << "[Shop] Uang tersisa: $" << money_.getAmount() << std::endl;

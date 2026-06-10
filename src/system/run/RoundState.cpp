@@ -43,4 +43,8 @@ void RoundState::reset() {
     currentScore = 0;
 }
 
+void RoundState::addHandsRemaining(int amount) {
+    handsRemaining += amount;
+}
+
 } // namespace system_p

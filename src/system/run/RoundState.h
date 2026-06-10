@@ -15,6 +15,7 @@ public:
     bool useHand();
     bool useDiscard();
     void reset();
+    void addHandsRemaining(int amount);
 
 private:
     const int maxHands;

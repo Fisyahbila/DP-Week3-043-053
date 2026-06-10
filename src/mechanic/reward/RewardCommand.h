@@ -9,6 +9,7 @@
 #include "Money.h"
 #include <memory>
 #include <string>
+#include <cstdlib>
 
 namespace mechanic {
 
@@ -178,8 +179,10 @@ public:
 
   bool execute() override
   {
-    system_p::Hand bonus = deck_.draw(1);
-    (void)bonus;
+    // Buat kartu acak: rank 2–14, suit acak
+    int rank = 2 + (std::rand() % 13); // rank 2..14
+    system_p::Suit suit = static_cast<system_p::Suit>(std::rand() % 4);
+    deck_.addCard(system_p::Card(rank, suit));
     return true;
   }
 

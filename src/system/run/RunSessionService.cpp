@@ -36,29 +36,85 @@ void RunSessionService::runSession()
     // Timing hook: NextBlind
     executePendingCommands(mechanic::CommandTiming::NextBlind);
 
-    bool winBlind = playBlind(sessionState.persistentState.ante, blindIndex);
-    if (winBlind) {
-      // Timing hook: NextShop (before blind cleared/shop opens)
+    bool skipped = false;
+    if (blindIndex == 0 || blindIndex == 1) {
+      blindManager.selectBlind(sessionState.persistentState.ante, blindIndex);
+      std::cout << "\n==============================================" << std::endl;
+      std::cout << "PILIHAN BLIND: " << blindManager.getCurrentBlindName() << std::endl;
+      std::cout << "Target Score: " << blindManager.getCurrentTargetScore() << std::endl;
+      std::cout << "Uang Hadiah jika Menang: $" << (blindIndex == 0 ? 3 : 4) << std::endl;
+      std::cout << "Reward jika dilewati (Skip): ";
+      if (blindIndex == 0) {
+        std::cout << "Bonus Hand (+1 sisa play di blind berikutnya)" << std::endl;
+      } else {
+        std::cout << "Free Playing Card (1 kartu tambahan ke dek)" << std::endl;
+      }
+      std::cout << "==============================================" << std::endl;
+      std::cout << "1. Mainkan Blind (Play Blind)\n";
+      std::cout << "2. Lewati Blind (Skip Blind)\n";
+      std::cout << "Pilihan Anda (1-2): ";
+
+      int choice = 1;
+      std::cin >> choice;
+      if (std::cin.fail()) {
+        std::cin.clear();
+        std::cin.ignore(10000, '\n');
+        choice = 1;
+      }
+      if (choice == 2) {
+        skipped = true;
+      }
+    }
+
+    if (skipped) {
+      std::cout << "\n[SKIP] Anda melewati " << blindManager.getCurrentBlindName() << "!" << std::endl;
+
+      // Panggil createSkipRewardCommand
+      auto skipCmd = sessionState.persistentState.currentBlind->createSkipRewardCommand(
+          sessionState.persistentState.bonusHands,
+          deck,
+          sessionState.persistentState.freeRerolls
+      );
+      if (skipCmd) {
+        sessionState.persistentState.pendingCommands.push_back(std::move(*skipCmd));
+      }
+
+      // Timing hook: NextShop
       executePendingCommands(mechanic::CommandTiming::NextShop);
 
-      rewardManager.onBlindCleared(blindIndex,
-                                   roundState.getHandsRemaining(),
-                                   blindManager.getCurrentBlindName());
+      // Buka Toko
+      rewardManager.openShop();
 
+      // Sync money
       sessionState.persistentState.money = rewardManager.getMoney();
 
       // Polimorfis transition
       sessionState.persistentState.currentBlind = sessionState.persistentState.currentBlind->extState(sessionState.persistentState.ante);
+    } else {
+      bool winBlind = playBlind(sessionState.persistentState.ante, blindIndex);
+      if (winBlind) {
+        // Timing hook: NextShop (before blind cleared/shop opens)
+        executePendingCommands(mechanic::CommandTiming::NextShop);
 
-      if (blindIndex == 2) {
-          // Timing hook: NextAnte
-          executePendingCommands(mechanic::CommandTiming::NextAnte);
+        rewardManager.onBlindCleared(blindIndex,
+                                     roundState.getHandsRemaining(),
+                                     blindManager.getCurrentBlindName());
+
+        sessionState.persistentState.money = rewardManager.getMoney();
+
+        // Polimorfis transition
+        sessionState.persistentState.currentBlind = sessionState.persistentState.currentBlind->extState(sessionState.persistentState.ante);
+
+        if (blindIndex == 2) {
+            // Timing hook: NextAnte
+            executePendingCommands(mechanic::CommandTiming::NextAnte);
+        }
       }
-    }
-    else {
-      std::cout << "\n[GAME OVER] Anda gagal mengalahkan " << blindManager.getCurrentBlindName()
-                << "!" << std::endl;
-      isGameOver = true;
+      else {
+        std::cout << "\n[GAME OVER] Anda gagal mengalahkan " << blindManager.getCurrentBlindName()
+                  << "!" << std::endl;
+        isGameOver = true;
+      }
     }
   }
 
@@ -104,6 +160,12 @@ bool RunSessionService::playBlind(int ante, int blindIndex)
 void RunSessionService::drawInitialHand()
 {
   roundState.reset();
+
+  if (sessionState.persistentState.bonusHands > 0) {
+    roundState.addHandsRemaining(sessionState.persistentState.bonusHands);
+    sessionState.persistentState.bonusHands = 0;
+  }
+
   deck = Deck::createStandardDeck();
   deck.shuffle();
   handState.clear();

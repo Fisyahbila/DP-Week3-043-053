@@ -53,6 +53,8 @@ public:
   // Akses ke JokerManager (untuk attach/notify dari GameManager)
   JokerManager& getJokerManager() { return jokerManager_; }
 
+  void openShop() { shop_.open(); }
+
   int getMoney() const { return money_.getAmount(); }
   Money& getMoneyRef() { return money_; }
 

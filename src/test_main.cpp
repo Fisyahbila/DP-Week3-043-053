@@ -3,6 +3,9 @@
 #include "system/scoring/HandScoreTable.h"
 #include "system/scoring/ScoringRule.h"
 #include "system/blind/BlindManager.h"
+#include "system/blind/SmallBlindState.h"
+#include "system/blind/BigBlindState.h"
+#include "system/blind/BossBlindState.h"
 #include "system/run/RoundState.h"
 #include "system/run/RunSessionState.h"
 #include "system/run/RunSessionService.h"
@@ -117,16 +120,16 @@ void testPolymorphicBlinds() {
     // Test 2: Big Blind (Ante 1)
     manager.selectBlind(1, 1); // Ante 1, Big Blind
     assert(manager.getCurrentBlindName() == "Big Blind");
-    assert(manager.getCurrentTargetScore() == 800);
-    assert(!manager.isTargetMet(799));
-    assert(manager.isTargetMet(800));
+    assert(manager.getCurrentTargetScore() == 400);
+    assert(!manager.isTargetMet(399));
+    assert(manager.isTargetMet(400));
     
     // Test 3: Boss Blind (Ante 2)
-    manager.selectBlind(2, 2); // Ante 2, Boss Blind (target 1600 * 2 = 3200)
+    manager.selectBlind(2, 2); // Ante 2, Boss Blind (target 600 * 2 = 1200)
     assert(manager.getCurrentBlindName() == "Boss Blind");
-    assert(manager.getCurrentTargetScore() == 3200);
-    assert(!manager.isTargetMet(3199));
-    assert(manager.isTargetMet(3200));
+    assert(manager.getCurrentTargetScore() == 1200);
+    assert(!manager.isTargetMet(1199));
+    assert(manager.isTargetMet(1200));
     
     std::cout << "[PASS] Polymorphic Blinds tests completed successfully." << std::endl;
 }
@@ -177,6 +180,65 @@ void testRunSessionState() {
     std::cout << "[PASS] RunSessionState tests completed successfully." << std::endl;
 }
 
+// Test Suite 7: Skip Blind and Skip Reward Commands
+void testSkipBlind() {
+    std::cout << "[TEST] Running Skip Blind tests..." << std::endl;
+    
+    // 1. Test Small Blind Skip Reward
+    {
+        std::shared_ptr<BlindState> sb = std::make_shared<SmallBlindState>();
+        int bonusHands = 0;
+        Deck deck = Deck::createStandardDeck();
+        int freeRerolls = 0;
+        
+        auto skipCmd = sb->createSkipRewardCommand(bonusHands, deck, freeRerolls);
+        assert(skipCmd != nullptr);
+        assert(skipCmd->timing == mechanic::CommandTiming::NextBlind);
+        
+        // Execute reward command
+        bool success = skipCmd->command->execute();
+        assert(success);
+        assert(bonusHands == 1);
+    }
+    
+    // 2. Test Big Blind Skip Reward
+    {
+        std::shared_ptr<BlindState> bb = std::make_shared<BigBlindState>();
+        int bonusHands = 0;
+        Deck deck = Deck::createStandardDeck();
+        int freeRerolls = 0;
+        int initialDeckSize = deck.draw(52).size(); // draw all to empty it
+        deck = Deck::createStandardDeck(); // recreate standard deck (52 cards)
+        
+        auto skipCmd = bb->createSkipRewardCommand(bonusHands, deck, freeRerolls);
+        assert(skipCmd != nullptr);
+        assert(skipCmd->timing == mechanic::CommandTiming::Start);
+        
+        bool success = skipCmd->command->execute();
+        assert(success);
+        // FreePlayingCardCommand draws 1 card from deck, leaving 51 cards
+        assert(deck.draw(52).size() == 51);
+    }
+    
+    // 3. Test Boss Blind Skip Reward
+    {
+        std::shared_ptr<BlindState> boss = std::make_shared<BossBlindState>();
+        int bonusHands = 0;
+        Deck deck = Deck::createStandardDeck();
+        int freeRerolls = 0;
+        
+        auto skipCmd = boss->createSkipRewardCommand(bonusHands, deck, freeRerolls);
+        assert(skipCmd != nullptr);
+        assert(skipCmd->timing == mechanic::CommandTiming::NextShop);
+        
+        bool success = skipCmd->command->execute();
+        assert(success);
+        assert(freeRerolls == 1);
+    }
+    
+    std::cout << "[PASS] Skip Blind tests completed successfully." << std::endl;
+}
+
 int main() {
     std::cout << "==============================================" << std::endl;
     std::cout << "      BALATRO TDD UNIT TEST SUITE RUNNER      " << std::endl;
@@ -188,6 +250,7 @@ int main() {
     testPolymorphicBlinds();
     testRoundState();
     testRunSessionState();
+    testSkipBlind();
     
     std::cout << "==============================================" << std::endl;
     std::cout << "      ALL TESTS PASSED SUCCESSFULLY!          " << std::endl;

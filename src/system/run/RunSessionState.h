@@ -15,6 +15,8 @@ struct RunPersistentState {
     std::vector<std::string> jokers;
     std::vector<mechanic::PendingCommand> pendingCommands;
     std::shared_ptr<BlindState> currentBlind;
+    int freeRerolls = 0;
+    int bonusHands = 0;
 };
 
 struct BlindRuntimeState {
